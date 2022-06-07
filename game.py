@@ -21,7 +21,6 @@ class Game:
 
     def run(self):
         """Запуск игры."""
-        start_time = time.time()
         while True:
             self.field.print()
             for command in self.commands:
@@ -43,7 +42,18 @@ class Game:
             if self.field.is_win():
                 break
 
+
+class TimedGame(Game):
+    """Игра, дополненная замером времени на прохождение."""
+
+    def __init__(self, origin: Game, console: Console):
+        self.origin = origin
+        self.console = console
+
+    def run(self):
+        """Запуск игры."""
+        start_time = time.time()
+        self.origin.run()
         end_time = time.time()
         elapsed_time = int(end_time - start_time)
-
         Congratulation(elapsed_time).print(self.console)

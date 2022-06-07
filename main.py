@@ -3,7 +3,7 @@ from argparser import argparser
 from commands import Commands
 from console import Console
 from field import Field
-from game import Game
+from game import Game, TimedGame
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
     commands = Commands()
     console = Console(os.name)
     game = Game(commands, field, console)
-    game.run()
+    TimedGame(game, console).run()
 
 
 def print_rules():
