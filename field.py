@@ -18,7 +18,7 @@ def handle_out_of_range(func):
         try:
             return func(*args, **kwargs)
         except IndexError:
-            raise CellOutOfRange("Клетки с данной координатой не существует.")
+            raise CellOutOfRange("Неверные координаты клетки!")
 
     return new_func
 

@@ -6,7 +6,7 @@ from commander import exec_command
 from congratulation import Congratulation
 from console import Console
 from field import Field
-from exceptions import BombDetonation, CellOutOfRange, NotEnoughFlags, QuitGame
+from exceptions import BombDetonation, RuleViolation, QuitGame
 
 
 class Game:
@@ -30,10 +30,8 @@ class Game:
                 except QuitGame:
                     self.console.clear()
                     exit(0)
-                except CellOutOfRange:
-                    print("Неверные координаты клетки!")
-                except NotEnoughFlags:
-                    print("Недостаточно флагов для открытия соседей!")
+                except RuleViolation as e:
+                    print(e)
                 except BombDetonation:
                     print("К сожалению, вы взорвались!")
                     time.sleep(3)
