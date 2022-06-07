@@ -3,6 +3,7 @@ import time
 from typing import Iterator
 
 from commander import exec_command
+from congratulation import Congratulation
 from console import Console
 from field import Field
 from exceptions import BombDetonation, CellOutOfRange, NotEnoughFlags, QuitGame
@@ -47,20 +48,5 @@ class Game:
         end_time = time.time()
         elapsed_time = int(end_time - start_time)
 
-        template = get_congratulation_template(elapsed_time)
-        print(template.format(elapsed_time=elapsed_time))
+        Congratulation(elapsed_time).print(self.console)
 
-
-def get_congratulation_template(elapsed_time: int) -> str:
-    """
-    Получение шаблона при победе,
-    в зависимости от окончания числа секунд игры.
-    """
-    if 11 <= elapsed_time <= 19 or elapsed_time % 10 in (0, 5, 6, 7, 8, 9):
-        template = "Поздравляем, вы прошли игру за {elapsed_time} секунд!"
-    elif elapsed_time % 10 in (2, 3, 4):
-        template = "Поздравляем, вы прошли игру за {elapsed_time} секунды!"
-    elif elapsed_time % 10 == 1:
-        template = "Поздравляем, вы прошли игру за {elapsed_time} секунду!"
-
-    return template
