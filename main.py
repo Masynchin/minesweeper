@@ -3,6 +3,7 @@ import time
 
 from argparser import argparser
 from commander import exec_command
+from commands import Commands
 from exceptions import BombDetonation, CellOutOfRange, NotEnoughFlags, QuitGame
 from field import Field
 
@@ -18,11 +19,11 @@ def main():
     field.set_bombs(bombs_count=args.bombs_count)
 
     start_time = time.time()
+    commands = Commands()
 
     while True:
         field.print()
-        while True:
-            command = input("\n> Введите координаты клетки: ")
+        for command in commands:
             try:
                 exec_command(command, field)
             except QuitGame:
