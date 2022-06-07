@@ -58,23 +58,20 @@ class Field:
         bombs_positions = random.sample(tuple(cells_positions), k=bombs_count)
 
         for (bomb_x, bomb_y) in bombs_positions:
-            cell = self._get_cell(bomb_x, bomb_y)
+            cell = self._cell(bomb_x, bomb_y)
             cell.set_bomb()
 
-            for neighbor_cell in self._get_all_neighbors(bomb_x, bomb_y):
+            for neighbor_cell in self._neighbors(bomb_x, bomb_y):
                 neighbor_cell.increment_value()
 
-    def _get_cell(self, cell_x: int, cell_y: int) -> Cell:
-        """Получение клетки по её координатам."""
+    def _cell(self, cell_x: int, cell_y: int) -> Cell:
+        """Клетка с данными координатами."""
         return self._field[cell_y][cell_x]
 
-    def _get_all_neighbors_positions(
+    def _neighbors_positions(
         self, cell_x: int, cell_y: int
     ) -> Iterator[Tuple[int, int]]:
-        """Получение позиций всех соседей клетки.
-
-        Получение позиций соседей по сторонам и диагоналям.
-        """
+        """Позиции всех соседей клетки."""
         for (x_offset, y_offset) in it.product((-1, 0, 1), repeat=2):
             if x_offset == y_offset == 0:
                 continue
@@ -86,19 +83,16 @@ class Field:
 
             yield (x, y)
 
-    def _get_all_neighbors(self, cell_x: int, cell_y: int) -> Iterator[Cell]:
-        """Получение всех соседей клетки.
-
-        Получение всех действительных соседей по сторонам и диагоналям.
-        """
-        neighbors_positions = self._get_all_neighbors_positions(cell_x, cell_y)
+    def _neighbors(self, cell_x: int, cell_y: int) -> Iterator[Cell]:
+        """Все соседи клетки."""
+        neighbors_positions = self._neighbors_positions(cell_x, cell_y)
         for (neighbor_x, neighbor_y) in neighbors_positions:
-            yield self._get_cell(neighbor_x, neighbor_y)
+            yield self._cell(neighbor_x, neighbor_y)
 
     @handle_out_of_range
     def open_cell(self, cell_x: int, cell_y: int):
         """Открыть клетку."""
-        cell = self._get_cell(cell_x, cell_y)
+        cell = self._cell(cell_x, cell_y)
         if cell.is_bomb:
             raise BombDetonation("Взрыв!")
         elif cell.is_empty:
@@ -119,9 +113,9 @@ class Field:
 
         Открытиие всех соседних пустых клеток, и их первых не пустых соседей.
         """
-        neighbors_positions = self._get_all_neighbors_positions(cell_x, cell_y)
+        neighbors_positions = self._neighbors_positions(cell_x, cell_y)
         for (x, y) in neighbors_positions:
-            cell = self._get_cell(x, y)
+            cell = self._cell(x, y)
             if cell.is_open:
                 continue
 
@@ -137,30 +131,30 @@ class Field:
         клетки. Иначе бросаем исключение.
         """
         flags_count = 0
-        for neighbor_cell in self._get_all_neighbors(cell_x, cell_y):
+        for neighbor_cell in self._neighbors(cell_x, cell_y):
             if neighbor_cell.is_flagged:
                 flags_count += 1
 
-        cell = self._get_cell(cell_x, cell_y)
+        cell = self._cell(cell_x, cell_y)
         if flags_count != cell.value:
             raise NotEnoughFlags("Недостаточно флагов для открытия соседей!")
 
-        neighbors_positions = self._get_all_neighbors_positions(cell_x, cell_y)
+        neighbors_positions = self._neighbors_positions(cell_x, cell_y)
         for (neighbor_x, neighbor_y) in neighbors_positions:
-            neighbor_cell = self._get_cell(neighbor_x, neighbor_y)
+            neighbor_cell = self._cell(neighbor_x, neighbor_y)
             if not neighbor_cell.is_flagged and not neighbor_cell.is_open:
                 self.open_cell(neighbor_x, neighbor_y)
 
     @handle_out_of_range
     def set_flag(self, cell_x: int, cell_y: int):
         """Пометить клетку флагом."""
-        cell = self._get_cell(cell_x, cell_y)
+        cell = self._cell(cell_x, cell_y)
         cell.set_flagged()
 
     @handle_out_of_range
     def remove_flag(self, cell_x: int, cell_y: int):
         """Убрать пометку флага с клетки."""
-        cell = self._get_cell(cell_x, cell_y)
+        cell = self._cell(cell_x, cell_y)
         cell.remove_flag()
 
     def is_win(self) -> bool:
