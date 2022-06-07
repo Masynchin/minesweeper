@@ -49,4 +49,3 @@ class Game:
         elapsed_time = int(end_time - start_time)
 
         Congratulation(elapsed_time).print(self.console)
-
