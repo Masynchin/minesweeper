@@ -1,5 +1,7 @@
+import os
 from argparser import argparser
 from commands import Commands
+from console import Console
 from field import Field
 from game import Game
 
@@ -13,7 +15,8 @@ def main():
     field = Field(width=args.width, height=args.height)
     field.set_bombs(bombs_count=args.bombs_count)
     commands = Commands()
-    game = Game(commands, field)
+    console = Console(os.name)
+    game = Game(commands, field, console)
     game.run()
 
 

@@ -3,6 +3,7 @@ import time
 from typing import Iterator
 
 from commander import exec_command
+from console import Console
 from field import Field
 from exceptions import BombDetonation, CellOutOfRange, NotEnoughFlags, QuitGame
 
@@ -10,9 +11,12 @@ from exceptions import BombDetonation, CellOutOfRange, NotEnoughFlags, QuitGame
 class Game:
     """Игра."""
 
-    def __init__(self, commands: Iterator[str], field: Field):
+    def __init__(
+        self, commands: Iterator[str], field: Field, console: Console
+    ):
         self.commands = commands
         self.field = field
+        self.console = console
 
     def run(self):
         """Запуск игры."""
@@ -23,7 +27,7 @@ class Game:
                 try:
                     exec_command(command, self.field)
                 except QuitGame:
-                    clear_screen()
+                    self.console.clear()
                     exit(0)
                 except CellOutOfRange:
                     print("Неверные координаты клетки!")
@@ -36,7 +40,7 @@ class Game:
                 else:
                     break
 
-            clear_screen()
+            self.console.clear()
             if self.field.is_win():
                 break
 
@@ -45,14 +49,6 @@ class Game:
 
         template = get_congratulation_template(elapsed_time)
         print(template.format(elapsed_time=elapsed_time))
-
-
-def clear_screen():
-    """Исполнение команды очистки консоли."""
-    if os.name == "nt":
-        os.system("cls")
-    else:
-        os.system("clear")
 
 
 def get_congratulation_template(elapsed_time: int) -> str:
