@@ -85,9 +85,9 @@ class Field:
 
     def _neighbors(self, cell_x: int, cell_y: int) -> Iterator[Cell]:
         """Все соседи клетки."""
-        neighbors_positions = self._neighbors_positions(cell_x, cell_y)
-        for (neighbor_x, neighbor_y) in neighbors_positions:
-            yield self._cell(neighbor_x, neighbor_y)
+        positions = self._neighbors_positions(cell_x, cell_y)
+        for (x, y) in positions:
+            yield self._cell(x, y)
 
     @handle_out_of_range
     def open_cell(self, cell_x: int, cell_y: int):
@@ -113,14 +113,14 @@ class Field:
 
         Открытиие всех соседних пустых клеток, и их первых не пустых соседей.
         """
-        neighbors_positions = self._neighbors_positions(cell_x, cell_y)
-        for (x, y) in neighbors_positions:
-            cell = self._cell(x, y)
-            if cell.is_open:
+        positions = self._neighbors_positions(cell_x, cell_y)
+        for (x, y) in positions:
+            neighbor = self._cell(x, y)
+            if neighbor.is_open:
                 continue
 
-            cell.set_open()
-            if cell.is_empty:
+            neighbor.set_open()
+            if neighbor.is_empty:
                 self._open_empty_cell_neighbors(x, y)
 
     def _open_valued_cell_neighbors(self, cell_x: int, cell_y: int):
@@ -131,8 +131,8 @@ class Field:
         клетки. Иначе бросаем исключение.
         """
         flags_count = 0
-        for neighbor_cell in self._neighbors(cell_x, cell_y):
-            if neighbor_cell.is_flagged:
+        for neighbor in self._neighbors(cell_x, cell_y):
+            if neighbor.is_flagged:
                 flags_count += 1
 
         cell = self._cell(cell_x, cell_y)
@@ -141,8 +141,8 @@ class Field:
 
         neighbors_positions = self._neighbors_positions(cell_x, cell_y)
         for (neighbor_x, neighbor_y) in neighbors_positions:
-            neighbor_cell = self._cell(neighbor_x, neighbor_y)
-            if not neighbor_cell.is_flagged and not neighbor_cell.is_open:
+            neighbor = self._cell(neighbor_x, neighbor_y)
+            if not neighbor.is_flagged and not neighbor.is_open:
                 self.open_cell(neighbor_x, neighbor_y)
 
     @handle_out_of_range
