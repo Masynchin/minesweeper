@@ -5,7 +5,6 @@ from argparser import argparser
 from commander import exec_command
 from exceptions import BombDetonation, CellOutOfRange, NotEnoughFlags, QuitGame
 from field import Field
-from printer import print_field
 
 
 def main():
@@ -21,7 +20,7 @@ def main():
     start_time = time.time()
 
     while True:
-        print_field(field)
+        field.print()
         while True:
             command = input("\n> Введите координаты клетки: ")
             try:

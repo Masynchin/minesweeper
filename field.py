@@ -1,5 +1,6 @@
 import itertools as it
 import random
+import string
 from typing import Iterator, List, Tuple
 
 from cell import Cell
@@ -169,3 +170,11 @@ class Field:
             for row in self
             for cell in row
         )
+
+    def print(self):
+        """Вывод поля в консоль"""
+        letters = string.digits[1:] + string.ascii_lowercase
+        print(" " * 4 + " ".join(f"{letters[i]:<3}" for i in range(self.width)))
+        for i, row in enumerate(self):
+            letter = f"{letters[i]:<2}"
+            print(letter, " ".join(str(cell) for cell in row))

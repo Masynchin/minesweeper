@@ -11,6 +11,21 @@ class Cell:
     is_open: bool = False
     value: Optional[int] = None
 
+    def __str__(self) -> str:
+        """Строковое представление клетки.
+
+        Данной строкой клетка будет выводится на экран.
+        """
+        if self.is_open:
+            if self.is_empty:
+                return "   "
+            elif self.value:
+                return f" {self.value} "
+        elif self.is_flagged:
+            return "[F]"
+        else:
+            return "[ ]"
+
     @property
     def is_empty(self) -> bool:
         """Является ли клетка пустой."""

@@ -1,8 +1,8 @@
+import string
 from exceptions import QuitGame
 from typing import Tuple
 
 from field import Field
-from printer import letters
 
 
 def exec_command(command: str, field: Field):
@@ -27,6 +27,7 @@ def _parse_command(command: str) -> Tuple[int, int, str]:
     # координаты клеток могут быть как цифрами, так и буквами,
     # которые записаны в printer.letters. Чтобы получить численные
     # координаты клетки, нужно взять индекс данных координат в printer.letters
+    letters = string.digits[1:] + string.ascii_lowercase
     cell_x = letters.index(cell_x)
     cell_y = letters.index(cell_y)
 
