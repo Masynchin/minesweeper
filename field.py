@@ -1,3 +1,4 @@
+from collections import defaultdict
 import itertools as it
 import random
 import string
@@ -29,17 +30,9 @@ class Field:
     def __init__(self, width: int, height: int):
         self.width = width
         self.height = height
-        self._field = self._create_field()
 
     def __iter__(self) -> Iterator[List[Cell]]:
         return iter(self._field)
-
-    def _create_field(self) -> List[List[Cell]]:
-        """Создание пустого поля."""
-        return [
-            [Cell() for _ in range(self.width)]
-            for _ in range(self.height)
-        ]
 
     def set_bombs(self, bombs_count: int):
         """Расстановка бомб.
@@ -50,19 +43,7 @@ class Field:
         if bombs_count > cells_count:
             raise ValueError("Слишком много бомб!")
 
-        cells_positions = it.product(
-            range(self.width),
-            range(self.height),
-            repeat=1,
-        )
-        bombs_positions = random.sample(tuple(cells_positions), k=bombs_count)
-
-        for (bomb_x, bomb_y) in bombs_positions:
-            cell = self._cell(bomb_x, bomb_y)
-            cell.set_bomb()
-
-            for neighbor_cell in self._neighbors(bomb_x, bomb_y):
-                neighbor_cell.increment_value()
+        self._field = RandomField(self.width, self.height, bombs_count)
 
     def _cell(self, cell_x: int, cell_y: int) -> Cell:
         """Клетка с данными координатами."""
@@ -172,3 +153,24 @@ class Field:
         for i, row in enumerate(self):
             letter = f"{letters[i]:<2}"
             print(letter, " ".join(str(cell) for cell in row))
+
+
+class RandomField(List[List[Cell]]):
+    """Поле с бомбами в случайных местах."""
+
+    def __init__(self, width: int, height: int, bombs_count: int):
+        cells_positions = it.product(range(width), range(height), repeat=1)
+        bombs_positions = random.sample(tuple(cells_positions), k=bombs_count)
+
+        cells = defaultdict(Cell)
+        for (bomb_x, bomb_y) in bombs_positions:
+            for (x_offset, y_offset) in it.product((-1, 0, 1), repeat=2):
+                x = bomb_x + x_offset
+                y = bomb_y + y_offset
+                cells[x, y].increment_value()
+
+        for (bomb_x, bomb_y) in bombs_positions:
+            cells[bomb_x, bomb_y].set_bomb()
+
+        field = [[cells[x, y] for x in range(width)] for y in range(height)]
+        super().__init__(field)
